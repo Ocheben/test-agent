@@ -9,9 +9,9 @@ from datetime import datetime
 from typing import Dict, Any
 import logging
 
-# Add backend src to Python path
-backend_path = Path(__file__).parent.parent
-sys.path.insert(0, str(backend_path))
+# Add app src to Python path
+app_path = Path(__file__).parent.parent
+sys.path.insert(0, str(app_path))
 
 try:
     from dotenv import load_dotenv

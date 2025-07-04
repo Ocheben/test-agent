@@ -1,6 +1,6 @@
-# 🧠 Thinking Agent Backend
+# 🧠 Thinking Agent App
 
-The backend system for the Thinking Agent - a FastAPI-based REST API that provides access to the advanced LLM agent with thinking capabilities, RAG orchestration, and service selection.
+The app system for the Thinking Agent - a FastAPI-based REST API that provides access to the advanced LLM agent with thinking capabilities, RAG orchestration, and service selection.
 
 ## 🚀 Quick Start
 
@@ -37,7 +37,7 @@ python server.py --host 0.0.0.0 --port 8080
 ## 📁 Project Structure
 
 ```
-backend/
+app/
 ├── src/                    # Core agent implementation
 │   ├── agent/             # Main thinking agent
 │   │   ├── thinking_agent.py
@@ -592,7 +592,7 @@ curl -X DELETE "http://127.0.0.1:8000/conversation-history"
 - Verify API keys are valid and have sufficient quota
 
 **Import errors:**
-- Check Python path includes the backend directory
+- Check Python path includes the app directory
 - Ensure virtual environment is activated
 - Verify all dependencies are installed
 

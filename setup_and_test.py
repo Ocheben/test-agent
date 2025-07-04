@@ -3,7 +3,7 @@
 Thinking Agent System - Setup and Test Script
 
 This script helps set up and test the complete Thinking Agent system
-with its new backend API structure.
+with its new app API structure.
 """
 
 import subprocess
@@ -20,7 +20,7 @@ def print_banner():
     ========================
     
     ✅ System successfully reorganized with:
-    • Backend API with FastAPI
+    • App API with FastAPI
     • Complete REST endpoints
     • Thinking agent with RAG
     • Service orchestration
@@ -34,7 +34,7 @@ def show_structure():
     📁 NEW PROJECT STRUCTURE:
     
     thinking-agent/
-    ├── backend/                    # Backend API and agent system
+    ├── app/                       # App API and agent system
     │   ├── src/                   # Core agent implementation
     │   │   ├── agent/            # Thinking agent
     │   │   ├── core/             # LLM interfaces
@@ -49,7 +49,7 @@ def show_structure():
     │   ├── server.py            # API server script
     │   ├── requirements.txt     # Dependencies
     │   ├── .env.example        # Environment template
-    │   └── README.md           # Backend documentation
+    │   └── README.md           # App documentation
     ├── client_example.py        # API client demo
     └── README.md               # Main documentation
     """)
@@ -83,7 +83,7 @@ def show_usage_examples():
     🚀 USAGE EXAMPLES:
     
     1. Start the API server:
-       cd backend
+       cd app
        python server.py
     
     2. Chat via curl:
@@ -116,20 +116,20 @@ def check_system():
     else:
         print(f"❌ Python {python_version.major}.{python_version.minor} (3.8+ required)")
     
-    # Check backend directory
-    backend_dir = Path("backend")
-    if backend_dir.exists():
-        print("✅ Backend directory exists")
+    # Check app directory
+    app_dir = Path("app")
+    if app_dir.exists():
+        print("✅ App directory exists")
     else:
-        print("❌ Backend directory missing")
+        print("❌ App directory missing")
         return False
     
     # Check key files
     key_files = [
-        "backend/src/agent/thinking_agent.py",
-        "backend/api/app.py",
-        "backend/server.py",
-        "backend/requirements.txt",
+        "app/src/agent/thinking_agent.py",
+        "app/api/app.py",
+        "app/server.py",
+        "app/requirements.txt",
         "client_example.py"
     ]
     
@@ -140,8 +140,8 @@ def check_system():
             print(f"❌ {file_path} missing")
     
     # Check environment setup
-    env_file = Path("backend/.env")
-    env_example = Path("backend/.env.example")
+    env_file = Path("app/.env")
+    env_example = Path("app/.env.example")
     
     if env_example.exists():
         print("✅ .env.example template available")
@@ -166,7 +166,7 @@ def show_next_steps():
        source thinking-agent-env/bin/activate  # On Windows: thinking-agent-env\\Scripts\\activate
     
     2. INSTALL DEPENDENCIES:
-       cd backend
+       cd app
        pip install -r requirements.txt
     
     3. CONFIGURE API KEYS:
@@ -185,7 +185,7 @@ def show_next_steps():
     
     6. INTEGRATE WITH YOUR APPLICATION:
        # Use the REST API endpoints in your own applications
-       # See backend/README.md for detailed API documentation
+       # See app/README.md for detailed API documentation
     """)
 
 
@@ -234,9 +234,9 @@ async def run_quick_test():
     
     try:
         # Test basic imports
-        sys.path.insert(0, str(Path("backend")))
+        sys.path.insert(0, str(Path("app")))
         
-        from backend.src.services.service_registry import ServiceRegistry
+        from app.src.services.service_registry import ServiceRegistry
         print("✅ Service registry imports successfully")
         
         registry = ServiceRegistry()
@@ -244,7 +244,7 @@ async def run_quick_test():
         print(f"✅ {len(services)} services available: {list(services.keys())}")
         
         # Test math service
-        from backend.src.services.base_service import MathSolverService, ServiceRequest
+        from app.src.services.base_service import MathSolverService, ServiceRequest
         
         math_service = MathSolverService()
         request = ServiceRequest(query="Test math query", parameters={})
@@ -259,7 +259,7 @@ async def run_quick_test():
         
     except Exception as e:
         print(f"❌ Test failed: {str(e)}")
-        print("   Install dependencies with: pip install -r backend/requirements.txt")
+        print("   Install dependencies with: pip install -r app/requirements.txt")
 
 
 def main():
@@ -283,7 +283,7 @@ def main():
     🎉 SYSTEM SETUP COMPLETE!
     
     The Thinking Agent has been successfully reorganized with:
-    • Complete backend API system
+    • Complete app API system
     • REST endpoints for easy integration
     • Comprehensive documentation
     • Client examples and demos

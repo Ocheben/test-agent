@@ -265,7 +265,7 @@ async def interactive_chat():
                 return
         except Exception as e:
             print(f"❌ Cannot connect to API server: {str(e)}")
-            print("Make sure the server is running with: python backend/server.py")
+            print("Make sure the server is running with: python app/server.py")
             return
         
         while True:
@@ -312,7 +312,7 @@ async def main():
         except Exception as e:
             print(f"❌ Cannot connect to API server: {str(e)}")
             print("\n🚀 To start the server, run:")
-            print("   cd backend")
+            print("   cd app")
             print("   python server.py")
             print("\nThen run this demo again.")
             return

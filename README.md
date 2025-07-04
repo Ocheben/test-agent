@@ -26,18 +26,18 @@ python3 -m venv thinking-agent-env
 source thinking-agent-env/bin/activate  # On Windows: thinking-agent-env\Scripts\activate
 
 # Install dependencies
-pip install -r backend/requirements.txt
+pip install -r app/requirements.txt
 
 # Set up configuration
-cp backend/.env.example backend/.env
-# Edit backend/.env with your API keys
+cp app/.env.example app/.env
+# Edit app/.env with your API keys
 ```
 
 ### 2. Start the API Server
 
 ```bash
 # Start the server
-cd backend
+cd app
 python server.py
 
 # The API will be available at http://127.0.0.1:8000
@@ -93,7 +93,7 @@ python client_example.py
 
 ```
 thinking-agent/
-├── backend/                 # Backend API and agent system
+├── app/                    # App API and agent system
 │   ├── src/                # Core agent implementation
 │   │   ├── agent/          # Main thinking agent
 │   │   ├── core/           # LLM interfaces
@@ -194,16 +194,16 @@ TOP_K_RETRIEVAL=5
 
 ```bash
 # Start server with default settings
-python backend/server.py
+python app/server.py
 
 # Start on different port
-python backend/server.py --port 8080
+python app/server.py --port 8080
 
 # Enable auto-reload for development
-python backend/server.py --reload
+python app/server.py --reload
 
 # Start on all interfaces
-python backend/server.py --host 0.0.0.0
+python app/server.py --host 0.0.0.0
 ```
 
 ### API Integration
@@ -262,7 +262,7 @@ curl "http://127.0.0.1:8000/status"
 ### Adding Custom Services
 
 ```python
-from backend.src.services.base_service import BaseService, ServiceRequest, ServiceResponse
+from app.src.services.base_service import BaseService, ServiceRequest, ServiceResponse
 
 class MyCustomService(BaseService):
     def __init__(self):
@@ -283,7 +283,7 @@ agent.service_registry.register_service(MyCustomService())
 ### Custom LLM Providers
 
 ```python
-from backend.src.core.base_llm import BaseLLM
+from app.src.core.base_llm import BaseLLM
 
 class MyCustomLLM(BaseLLM):
     async def generate(self, messages, **kwargs):
@@ -299,7 +299,7 @@ agent = ThinkingAgent(llm=MyCustomLLM())
 ### Production Setup
 
 1. **Environment Variables**: Set API keys and configuration
-2. **Dependencies**: Install with `pip install -r backend/requirements.txt`
+2. **Dependencies**: Install with `pip install -r app/requirements.txt`
 3. **Process Manager**: Use gunicorn, uwsgi, or supervisor
 4. **Reverse Proxy**: Configure nginx or Apache
 5. **SSL/TLS**: Enable HTTPS for production
@@ -317,13 +317,13 @@ docker run -p 8000:8000 -e OPENAI_API_KEY=your_key thinking-agent
 ### Common Issues
 
 **Server won't start:**
-- Check dependencies: `pip install -r backend/requirements.txt`
+- Check dependencies: `pip install -r app/requirements.txt`
 - Verify Python version (3.8+ required)
 - Check port availability: `lsof -i :8000`
 
 **API key errors:**
 - Set environment variables: `export OPENAI_API_KEY=your_key`
-- Or create `backend/.env` file with keys
+- Or create `app/.env` file with keys
 
 **Import errors:**
 - Ensure proper virtual environment activation
@@ -360,8 +360,8 @@ This project is licensed under the MIT License.
 
 **Ready to get started?** 🚀
 
-1. Install dependencies: `pip install -r backend/requirements.txt`
-2. Set your API keys in `backend/.env`
-3. Start the server: `python backend/server.py`
+1. Install dependencies: `pip install -r app/requirements.txt`
+2. Set your API keys in `app/.env`
+3. Start the server: `python app/server.py`
 4. Visit `http://127.0.0.1:8000/docs` for API documentation
 5. Try the client demo: `python client_example.py`
