@@ -1,6 +1,6 @@
-# 🧠 Thinking Agent
+# 🧠 Thinking Agent System
 
-An advanced LLM agent system with thinking capabilities, agentic RAG orchestration, and intelligent service selection.
+An advanced LLM agent system with thinking capabilities, agentic RAG orchestration, and intelligent service selection. Now with a complete API backend for easy integration.
 
 ## ✨ Features
 
@@ -8,159 +8,171 @@ An advanced LLM agent system with thinking capabilities, agentic RAG orchestrati
 - **📚 RAG Orchestration**: Intelligent retrieval from knowledge bases
 - **🔧 Service Selection**: Automatic selection and orchestration of specialized services
 - **💬 Natural Conversation**: Maintains conversation context and history
-- **🎯 Multi-Provider Support**: Works with OpenAI GPT and Anthropic Claude models
+- **� REST API**: Complete HTTP API for easy integration
+- **�🎯 Multi-Provider Support**: Works with OpenAI GPT and Anthropic Claude models
 - **🔌 Extensible Architecture**: Easy to add new services and capabilities
 
 ## 🚀 Quick Start
 
-### Installation
+### 1. Setup
 
-1. **Clone the repository:**
 ```bash
+# Clone the repository
 git clone <repository-url>
 cd thinking-agent
+
+# Set up virtual environment (recommended)
+python3 -m venv thinking-agent-env
+source thinking-agent-env/bin/activate  # On Windows: thinking-agent-env\Scripts\activate
+
+# Install dependencies
+pip install -r backend/requirements.txt
+
+# Set up configuration
+cp backend/.env.example backend/.env
+# Edit backend/.env with your API keys
 ```
 
-2. **Install dependencies:**
+### 2. Start the API Server
+
 ```bash
-pip install -r requirements.txt
+# Start the server
+cd backend
+python server.py
+
+# The API will be available at http://127.0.0.1:8000
+# View docs at http://127.0.0.1:8000/docs
 ```
 
-3. **Set up configuration:**
+### 3. Use the API
+
+#### With curl:
 ```bash
-# Create configuration file
-python main.py --setup
+# Basic chat
+curl -X POST "http://127.0.0.1:8000/chat" \
+     -H "Content-Type: application/json" \
+     -d '{"message": "What is machine learning?", "show_thinking": true}'
 
-# Copy and edit with your API keys
-cp .env.example .env
-# Edit .env with your OPENAI_API_KEY or ANTHROPIC_API_KEY
+# Add knowledge
+curl -X POST "http://127.0.0.1:8000/knowledge" \
+     -H "Content-Type: application/json" \
+     -d '{"content": "Python is a programming language", "source": "user"}'
+
+# Get agent status
+curl "http://127.0.0.1:8000/status"
 ```
 
-4. **Run the agent:**
-```bash
-# Interactive demo
-python main.py
-
-# Single query
-python main.py --query "What is machine learning?"
-
-# Basic example
-python main.py --example
-```
-
-### Quick Example
-
+#### With Python client:
 ```python
 import asyncio
-from src.agent.thinking_agent import ThinkingAgent
+import httpx
 
-async def example():
-    # Create agent
-    agent = ThinkingAgent()
-    
-    # Add knowledge
-    await agent.add_knowledge(
-        "Python is a programming language known for simplicity and readability.",
-        source="programming_facts"
-    )
-    
-    # Process query
-    response = await agent.process_query("What do you know about Python?")
-    
-    print("Answer:", response.final_answer)
-    print("Services used:", response.services_used)
-    print("Thinking steps:", len(response.thinking_steps))
+async def chat_with_agent():
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            "http://127.0.0.1:8000/chat",
+            json={
+                "message": "What is artificial intelligence?",
+                "show_thinking": True
+            }
+        )
+        result = response.json()
+        print(f"Answer: {result['answer']}")
+        print(f"Processing time: {result['processing_time']:.2f}s")
 
-asyncio.run(example())
+asyncio.run(chat_with_agent())
+```
+
+#### Interactive Demo:
+```bash
+# Run the interactive client demo
+python client_example.py
 ```
 
 ## 🏗️ Architecture
 
-The system consists of several key components:
+```
+thinking-agent/
+├── backend/                 # Backend API and agent system
+│   ├── src/                # Core agent implementation
+│   │   ├── agent/          # Main thinking agent
+│   │   ├── core/           # LLM interfaces
+│   │   ├── rag/            # RAG implementation
+│   │   ├── services/       # Service system
+│   │   └── config/         # Configuration
+│   ├── api/                # FastAPI application
+│   │   ├── app.py          # Main API routes
+│   │   ├── models.py       # Pydantic models
+│   │   └── __init__.py
+│   ├── examples/           # Usage examples
+│   ├── server.py           # API server script
+│   └── requirements.txt    # Dependencies
+├── client_example.py       # Client demo script
+└── README.md               # This file
+```
 
-### Core Components
+## 🌐 API Endpoints
 
-- **`ThinkingAgent`**: Main orchestrator with multi-step reasoning
-- **`BaseLLM`**: Abstract interface for different LLM providers
-- **`RAGOrchestrator`**: Manages document retrieval and knowledge bases
-- **`ServiceRegistry`**: Handles service discovery and routing
+### Chat & Interaction
+
+- **POST `/chat`** - Send a message to the thinking agent
+  ```json
+  {
+    "message": "What is machine learning?",
+    "show_thinking": true,
+    "use_rag": true,
+    "context": {"user_id": "123"}
+  }
+  ```
+
+- **POST `/explain`** - Explain reasoning without execution
+- **GET `/conversation-history`** - Get conversation history  
+- **DELETE `/conversation-history`** - Clear conversation history
+
+### Knowledge Management
+
+- **POST `/knowledge`** - Add knowledge to the agent
+  ```json
+  {
+    "content": "Python is a programming language...",
+    "source": "user_input",
+    "metadata": {"topic": "programming"}
+  }
+  ```
+
+### System Information
+
+- **GET `/status`** - Get agent status and capabilities
+- **GET `/services`** - List available services
+- **GET `/health`** - Health check endpoint
+- **GET `/docs`** - Interactive API documentation
+
+## 🧪 Core Components
+
+### Thinking Agent
+- Multi-step reasoning process
+- Query analysis and planning
+- Information gathering via RAG and services
+- Response synthesis and generation
 
 ### Built-in Services
+- **🧮 Math Solver**: Mathematical calculations
+- **🔍 Web Search**: Information retrieval (mock)
+- **📄 Text Summarization**: Text analysis and summarization
+- **📚 Document Retrieval**: RAG-powered knowledge search
 
-- **🧮 Math Solver**: Evaluates mathematical expressions
-- **🔍 Web Search**: Searches for information (mock implementation)
-- **📄 Text Summarization**: Summarizes and analyzes text content
-- **📚 Document Retrieval**: Queries the RAG knowledge base
-
-### Thinking Process
-
-1. **Query Analysis**: Understanding the user's request
-2. **Information Gathering**: RAG retrieval + service calls
-3. **Synthesis**: Reasoning about collected information
-4. **Response Generation**: Creating the final answer
-
-## 📖 Usage Examples
-
-### Interactive Demo
-
-```bash
-python main.py
-```
-
-Commands in interactive mode:
-- `/help` - Show help
-- `/thinking` - Toggle thinking process display
-- `/add <content>` - Add knowledge
-- `/explain <query>` - Explain reasoning without executing
-- `/stats` - Show knowledge base statistics
-
-### Programmatic Usage
-
-```python
-from src.agent.thinking_agent import ThinkingAgent
-
-# Initialize agent
-agent = ThinkingAgent()
-
-# Add knowledge
-await agent.add_knowledge("Your knowledge here", source="manual")
-
-# Process queries
-response = await agent.process_query("Your question")
-
-# Access thinking steps
-for step in response.thinking_steps:
-    print(f"Step {step.step_number}: {step.thought}")
-    print(f"Reasoning: {step.reasoning}")
-```
-
-### Custom Services
-
-```python
-from src.services.base_service import BaseService, ServiceRequest, ServiceResponse
-
-class CustomService(BaseService):
-    def __init__(self):
-        super().__init__("CustomService", "My custom service")
-    
-    async def process(self, request: ServiceRequest) -> ServiceResponse:
-        # Your custom logic here
-        return ServiceResponse(
-            content="Custom response",
-            metadata={"service": self.name},
-            success=True
-        )
-
-# Register with agent
-agent.service_registry.register_service(CustomService())
-```
+### RAG System
+- Multiple vector store backends (ChromaDB, FAISS)
+- Intelligent document chunking
+- Hybrid retrieval strategies
+- Query expansion and reranking
 
 ## ⚙️ Configuration
 
-Configuration is handled through environment variables or a `.env` file:
+Configure the system via environment variables or `.env` file:
 
 ```env
-# API Keys
+# API Keys (at least one required)
 OPENAI_API_KEY=your_openai_key
 ANTHROPIC_API_KEY=your_anthropic_key
 
@@ -176,138 +188,180 @@ CHUNK_SIZE=1000
 TOP_K_RETRIEVAL=5
 ```
 
-## 🧪 Testing
+## 📖 Usage Examples
 
-Run the test suite:
+### Server Commands
 
 ```bash
-# Basic functionality test
-python examples/basic_usage.py
+# Start server with default settings
+python backend/server.py
 
-# Interactive testing
-python examples/interactive_demo.py
+# Start on different port
+python backend/server.py --port 8080
 
-# Check dependencies
-python main.py --check-deps
+# Enable auto-reload for development
+python backend/server.py --reload
+
+# Start on all interfaces
+python backend/server.py --host 0.0.0.0
 ```
 
-## 📁 Project Structure
+### API Integration
 
-```
-thinking-agent/
-├── src/
-│   ├── agent/              # Main agent implementation
-│   │   ├── thinking_agent.py
-│   │   └── __init__.py
-│   ├── core/               # Core LLM interfaces
-│   │   ├── base_llm.py
-│   │   └── __init__.py
-│   ├── rag/                # RAG implementation
-│   │   ├── vector_store.py
-│   │   ├── retriever.py
-│   │   └── __init__.py
-│   ├── services/           # Service system
-│   │   ├── base_service.py
-│   │   ├── service_registry.py
-│   │   └── __init__.py
-│   └── config/             # Configuration
-│       ├── settings.py
-│       └── __init__.py
-├── examples/               # Usage examples
-│   ├── basic_usage.py
-│   └── interactive_demo.py
-├── data/                   # Data storage (created automatically)
-├── main.py                 # Main entry point
-├── requirements.txt        # Dependencies
-└── README.md
+```python
+# Example Python integration
+import httpx
+import asyncio
+
+class ThinkingAgentAPI:
+    def __init__(self, base_url="http://127.0.0.1:8000"):
+        self.base_url = base_url
+    
+    async def chat(self, message, show_thinking=False):
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{self.base_url}/chat",
+                json={
+                    "message": message,
+                    "show_thinking": show_thinking
+                }
+            )
+            return response.json()
+
+# Usage
+api = ThinkingAgentAPI()
+result = asyncio.run(api.chat("Explain quantum computing"))
+print(result['answer'])
 ```
 
-## 🔧 Advanced Usage
+### cURL Examples
+
+```bash
+# Chat with thinking process
+curl -X POST "http://127.0.0.1:8000/chat" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Solve: 2x + 3 = 11",
+    "show_thinking": true
+  }'
+
+# Add knowledge
+curl -X POST "http://127.0.0.1:8000/knowledge" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "The capital of France is Paris",
+    "source": "geography_facts"
+  }'
+
+# Get system status
+curl "http://127.0.0.1:8000/status"
+```
+
+## 🔧 Development
+
+### Adding Custom Services
+
+```python
+from backend.src.services.base_service import BaseService, ServiceRequest, ServiceResponse
+
+class MyCustomService(BaseService):
+    def __init__(self):
+        super().__init__("MyService", "My custom service")
+    
+    async def process(self, request: ServiceRequest) -> ServiceResponse:
+        # Your logic here
+        return ServiceResponse(
+            content="Custom response",
+            metadata={"service": self.name},
+            success=True
+        )
+
+# Register the service
+agent.service_registry.register_service(MyCustomService())
+```
 
 ### Custom LLM Providers
 
 ```python
-from src.core.base_llm import BaseLLM
+from backend.src.core.base_llm import BaseLLM
 
-class CustomLLM(BaseLLM):
+class MyCustomLLM(BaseLLM):
     async def generate(self, messages, **kwargs):
-        # Your custom LLM implementation
+        # Your LLM implementation
         pass
 
 # Use with agent
-agent = ThinkingAgent(llm=CustomLLM())
+agent = ThinkingAgent(llm=MyCustomLLM())
 ```
 
-### Vector Store Options
+## 🚀 Deployment
 
-The system supports multiple vector stores:
+### Production Setup
 
-```python
-from src.rag.vector_store import create_vector_store
+1. **Environment Variables**: Set API keys and configuration
+2. **Dependencies**: Install with `pip install -r backend/requirements.txt`
+3. **Process Manager**: Use gunicorn, uwsgi, or supervisor
+4. **Reverse Proxy**: Configure nginx or Apache
+5. **SSL/TLS**: Enable HTTPS for production
 
-# ChromaDB (default)
-chroma_store = create_vector_store("chroma", persist_directory="./data/chroma")
+### Docker (Coming Soon)
 
-# FAISS
-faiss_store = create_vector_store("faiss", persist_path="./data/faiss")
+```bash
+# Build and run with Docker
+docker build -t thinking-agent .
+docker run -p 8000:8000 -e OPENAI_API_KEY=your_key thinking-agent
 ```
-
-### Service Orchestration
-
-```python
-# Get service recommendations
-recommendations = agent.service_registry.get_service_recommendations(query)
-
-# Execute multiple services
-results = await agent.service_registry.execute_multiple_services(
-    request, ["MathSolverService", "WebSearchService"]
-)
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📝 License
-
-This project is licensed under the MIT License.
 
 ## 🆘 Troubleshooting
 
 ### Common Issues
 
-**No API keys found:**
-- Set `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` environment variables
-- Or create a `.env` file with your keys
+**Server won't start:**
+- Check dependencies: `pip install -r backend/requirements.txt`
+- Verify Python version (3.8+ required)
+- Check port availability: `lsof -i :8000`
+
+**API key errors:**
+- Set environment variables: `export OPENAI_API_KEY=your_key`
+- Or create `backend/.env` file with keys
 
 **Import errors:**
-- Install dependencies: `pip install -r requirements.txt`
-- Check Python version (3.8+ required)
-
-**Vector store errors:**
-- ChromaDB issues: `pip install --upgrade chromadb`
-- FAISS issues: `pip install faiss-cpu`
+- Ensure proper virtual environment activation
+- Check Python path and current directory
 
 **Performance issues:**
 - Reduce `MAX_TOKENS` in configuration
 - Use smaller embedding models
-- Limit `TOP_K_RETRIEVAL` for RAG
+- Optimize vector store settings
 
 ### Getting Help
 
-- Check the examples in the `examples/` directory
-- Run `python main.py --help` for command-line options
-- Use the interactive demo to test functionality
+- 📚 **API Docs**: Visit `/docs` endpoint when server is running
+- 🔧 **Examples**: Check `client_example.py` for usage patterns
+- 🧪 **Testing**: Run backend examples to verify functionality
 
 ## 🎯 Roadmap
 
-- [ ] Additional LLM providers (Hugging Face, local models)
-- [ ] More specialized services (code analysis, data processing)
-- [ ] Web interface for easier interaction
-- [ ] Advanced RAG strategies (hybrid search, reranking)
-- [ ] Integration with external APIs and tools
-- [ ] Performance optimizations and caching
+- [ ] Docker containerization
+- [ ] Authentication and authorization
+- [ ] Rate limiting and quotas  
+- [ ] Websocket support for real-time chat
+- [ ] Frontend web interface
+- [ ] Additional LLM providers
+- [ ] Advanced RAG strategies
+- [ ] Performance optimizations
+- [ ] Monitoring and observability
+
+## 📝 License
+
+This project is licensed under the MIT License.
+
+---
+
+**Ready to get started?** 🚀
+
+1. Install dependencies: `pip install -r backend/requirements.txt`
+2. Set your API keys in `backend/.env`
+3. Start the server: `python backend/server.py`
+4. Visit `http://127.0.0.1:8000/docs` for API documentation
+5. Try the client demo: `python client_example.py`
