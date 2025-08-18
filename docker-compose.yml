@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  agent:
+    build:
+      context: ./app
+    ports:
+      - "8000:8000"
+    env_file:
+      - app/.env
+  frontend:
+    build:
+      context: ./web
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_AGENT_API_URL=http://localhost:8000
