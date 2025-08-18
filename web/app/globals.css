@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+main {
+  padding: 1rem;
+}
+
+.chat {
+  min-height: 300px;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.chat p {
+  margin: 0.5rem 0;
+}
