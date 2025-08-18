@@ -304,13 +304,24 @@ agent = ThinkingAgent(llm=MyCustomLLM())
 4. **Reverse Proxy**: Configure nginx or Apache
 5. **SSL/TLS**: Enable HTTPS for production
 
-### Docker (Coming Soon)
+### Docker & AWS ECS Fargate
 
 ```bash
-# Build and run with Docker
-docker build -t thinking-agent .
-docker run -p 8000:8000 -e OPENAI_API_KEY=your_key thinking-agent
+# Build agent image
+docker build -f Dockerfile.agent -t thinking-agent .
+
+# Build frontend image
+docker build -f frontend/Dockerfile -t thinking-agent-frontend ./frontend
+
+# Or start both locally
+docker-compose up --build
 ```
+
+To deploy on AWS ECS Fargate:
+
+1. Push both images to Amazon ECR.
+2. Update image URIs and environment variables in `deploy/ecs-task-def.json`.
+3. Register the task definition and create an ECS service using the Fargate launch type.
 
 ## 🆘 Troubleshooting
 
@@ -342,9 +353,9 @@ docker run -p 8000:8000 -e OPENAI_API_KEY=your_key thinking-agent
 
 ## 🎯 Roadmap
 
-- [ ] Docker containerization
+- [x] Docker containerization
 - [ ] Authentication and authorization
-- [ ] Rate limiting and quotas  
+- [ ] Rate limiting and quotas
 - [ ] Websocket support for real-time chat
 - [ ] Frontend web interface
 - [ ] Additional LLM providers

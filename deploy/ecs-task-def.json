@@ -1,0 +1,36 @@
+{
+  "family": "thinking-agent",
+  "networkMode": "awsvpc",
+  "cpu": "512",
+  "memory": "1024",
+  "requiresCompatibilities": ["FARGATE"],
+  "executionRoleArn": "arn:aws:iam::<account-id>:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "agent",
+      "image": "<account-id>.dkr.ecr.<region>.amazonaws.com/thinking-agent:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {"name": "OPENAI_API_KEY", "value": ""},
+        {"name": "ANTHROPIC_API_KEY", "value": ""}
+      ]
+    },
+    {
+      "name": "frontend",
+      "image": "<account-id>.dkr.ecr.<region>.amazonaws.com/thinking-agent-frontend:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ]
+}
