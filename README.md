@@ -304,13 +304,37 @@ agent = ThinkingAgent(llm=MyCustomLLM())
 4. **Reverse Proxy**: Configure nginx or Apache
 5. **SSL/TLS**: Enable HTTPS for production
 
-### Docker (Coming Soon)
+### Docker & AWS ECS Fargate
+
+This repository includes Dockerfiles for both the API agent and Next.js frontend.
 
 ```bash
-# Build and run with Docker
-docker build -t thinking-agent .
-docker run -p 8000:8000 -e OPENAI_API_KEY=your_key thinking-agent
+# Build images
+docker compose build
+
+# Run locally
+docker compose up
 ```
+
+#### Deploy to AWS ECS Fargate
+
+1. **Authenticate to ECR** and push images:
+
+   ```bash
+   aws ecr get-login-password --region <region> | \
+     docker login --username AWS --password-stdin <account>.dkr.ecr.<region>.amazonaws.com
+   docker compose build
+   docker compose push
+   ```
+
+2. **Deploy with the ECS CLI**:
+
+   ```bash
+   aws ecs compose --project-name thinking-agent up \
+     --region <region> --create-log-groups
+   ```
+
+The compose file defines both services and is compatible with AWS ECS Fargate.
 
 ## 🆘 Troubleshooting
 
@@ -342,7 +366,7 @@ docker run -p 8000:8000 -e OPENAI_API_KEY=your_key thinking-agent
 
 ## 🎯 Roadmap
 
-- [ ] Docker containerization
+- [x] Docker containerization
 - [ ] Authentication and authorization
 - [ ] Rate limiting and quotas  
 - [ ] Websocket support for real-time chat
